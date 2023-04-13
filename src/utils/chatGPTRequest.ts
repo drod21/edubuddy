@@ -1,11 +1,10 @@
 import axios, { type AxiosResponse } from "axios";
 
+type Choice = { text: string };
 type Res = {
-  choices: {
-    text: string;
-  }[];
+  choices: Choice[];
 };
-export const chatGPTRequest = async (prompt: string) => {
+export const chatGPTRequest = async (prompt: string): Promise<string> => {
   const apiKey = process.env.CHATGPT_API_KEY;
   const apiUrl = "https://api.openai.com/v1/engines/davinci-codex/completions";
   if (!apiKey) {
@@ -30,7 +29,7 @@ export const chatGPTRequest = async (prompt: string) => {
       headers: headers,
     });
 
-    return response?.data?.choices?.[0]?.text;
+    return response?.data?.choices?.[0]?.text ?? "";
   } catch (error) {
     console.error(error);
     return "Error: Unable to generate content.";
