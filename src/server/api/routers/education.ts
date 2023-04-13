@@ -3,7 +3,7 @@ import { z } from "zod";
 import {
   createTRPCRouter,
   publicProcedure,
-  protectedProcedure,
+  // protectedProcedure, // TODO: Add protected routes
 } from "~/server/api/trpc";
 import { chatGPTRequest } from "~/utils/chatGPTRequest"; // Move the chatGPTRequest function to a separate utility file.
 
