@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-"use client";
+// "use client";
 // import { auth } from "@clerk/nextjs/app-beta";
 export default function Page() {
   // const { userId } = auth();

@@ -30,7 +30,7 @@ export const Header: React.FC = () => {
             <LinkItem href="/about">About</LinkItem>
             <LinkItem href="/features">Features</LinkItem>
             <LinkItem href="/pricing">Pricing</LinkItem>
-            {!userId && <LinkItem href="/signin">Sign In</LinkItem>}
+            {!userId && <LinkItem href="/sign-in">Sign In</LinkItem>}
             {!userId && (
               <Link
                 className="rounded-md bg-secondary px-6 py-2 transition-colors hover:bg-accent"
