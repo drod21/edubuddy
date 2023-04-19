@@ -1,5 +1,7 @@
 // trpc/routers/education.ts
 import { clerkClient } from "@clerk/nextjs/server";
+import { PrismaClient, User } from "@prisma/client";
+import { PrismaClientOptions } from "@prisma/client/runtime";
 import { z } from "zod";
 import {
   createTRPCRouter,
@@ -21,15 +23,24 @@ const GetUserProfile = z.object({
 export const userRouter = createTRPCRouter({
   getUserProfile: publicProcedure
     .input(GetUserProfile)
-    .query(({ ctx, input }) => {
-      const { prisma } = ctx;
-      const { userId } = input;
+    .query(
+      async ({
+        ctx,
+        input,
+      }): Promise<Pick<
+        User,
+        "dateOfBirth" | "id" | "educationLevel"
+      > | null> => {
+        const { prisma } = ctx;
+        const { userId } = input;
+        const user = await prisma.user.findUnique({
+          select: { dateOfBirth: true, educationLevel: true, id: true },
+          where: { id: userId },
+        });
 
-      return prisma.user.findUnique({
-        select: { dateOfBirth: true, educationLevel: true, id: true },
-        where: { id: userId },
-      });
-    }),
+        return user;
+      }
+    ),
   setUserProfile: publicProcedure
     .input(SetUserProfile)
     .mutation(async ({ ctx, input }) => {

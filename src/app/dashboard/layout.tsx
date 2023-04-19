@@ -1,6 +1,9 @@
+"use client";
 import Link from "next/link";
+import { api } from "~/utils/api";
 // TODO: Implement sidenav for dashboard layout
-export default function Layout({ children }: { children: React.ReactNode }) {
+
+function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex">
       <nav className="sidebar h-screen w-[300px] overflow-y-auto bg-white p-2 text-center shadow-md lg:left-0">
@@ -8,7 +11,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <ul className="relative m-0 list-none px-[0.2rem]">
           <li className="relative">
             <Link
-              href="/profile"
+              href="/dashboard/profile"
               className="block rounded-md px-4 py-2 text-primary transition-colors hover:bg-neutral hover:text-white"
             >
               Profile
@@ -16,7 +19,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </li>
           <li className="relative">
             <Link
-              href="/settings"
+              href="/dashboard/settings"
               className="block rounded-md px-4 py-2 text-primary transition-colors hover:bg-neutral hover:text-white"
             >
               Settings
@@ -36,3 +39,5 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     </div>
   );
 }
+
+export default api.withTRPC(Layout);

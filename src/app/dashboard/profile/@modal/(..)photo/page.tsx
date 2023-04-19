@@ -1,18 +1,19 @@
+"use client";
 import { currentUser } from "@clerk/nextjs/app-beta";
 import { api } from "~/utils/api";
 
-export default async function ProfileModalPage({
-  searchParams,
-}: {
-  searchParams: { id: string };
-}) {
-  const { id } = searchParams;
+export default async function ProfileModalPage({}) {
   const user = await currentUser();
-  if (id !== user?.id) {
+  if (!user) {
+    return <div>Not authorized</div>;
+  }
+  if (user.id !== user?.id) {
     return <div>Not authorized</div>;
   }
 
-  const userProfile = api.user.getUserProfile.useQuery({ userId: id });
+  const userProfile = api.user.getUserProfile.useQuery({
+    userId: user?.id ?? "",
+  });
 
   // const [age, setAge] = useState<number | undefined>();
   // const [educationLevel, setEducationLevel] = useState<string | undefined>();
