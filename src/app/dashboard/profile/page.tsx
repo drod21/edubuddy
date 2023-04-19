@@ -3,10 +3,18 @@ import { useUser } from "@clerk/clerk-react";
 import { api } from "~/utils/api";
 
 export default function ProfilePage() {
-  const { isLoaded, user } = useUser();
-  if (!isLoaded) {
+  const { user } = useUser();
+  if (!user) {
     return <div>Not authorized</div>;
   }
+  const mut = api.user.setUserProfile.useMutation();
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData);
+    console.log(e, data);
+    await mut.mutateAsync({ userId: user.id, ...data });
+  };
 
   const userProfile = api.user.getUserProfile.useQuery({
     userId: user?.id ?? "",
