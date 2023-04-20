@@ -4,5 +4,11 @@ export default function SignInPage() {
   const { userId } = auth();
   if (userId) return null;
 
-  return <SignIn />;
+  // div to center the sign in form with tailwind
+
+  return (
+    <div className="flex items-center justify-center">
+      <SignIn />
+    </div>
+  );
 }

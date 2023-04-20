@@ -1,15 +1,23 @@
 "use client";
-import { currentUser } from "@clerk/nextjs/app-beta";
+import { useUser } from "@clerk/clerk-react";
+import type { FormEvent } from "react";
 import { api } from "~/utils/api";
 
-export default async function ProfileModalPage({}) {
-  const user = await currentUser();
+export default function ProfileModalPage({}) {
+  const { user } = useUser();
   if (!user) {
     return <div>Not authorized</div>;
   }
-  if (user.id !== user?.id) {
-    return <div>Not authorized</div>;
-  }
+  const mut = api.user.setUserProfile.useMutation();
+  const onSubmit = (e: FormEvent) => {
+    const formData = new FormData(e.target as HTMLFormElement);
+    const data = Object.fromEntries(formData);
+    mut.mutate({
+      userId: user.id,
+      educationLevel: (data.educationLevel as string) ?? "",
+      dateOfBirth: new Date((data.dateOfBirth as string) ?? ""),
+    });
+  };
 
   const userProfile = api.user.getUserProfile.useQuery({
     userId: user?.id ?? "",
@@ -39,11 +47,13 @@ export default async function ProfileModalPage({}) {
     return age;
   }
 
+  if (userProfile.isLoading) return <div>Loading...</div>;
+
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="mb-6 text-3xl font-bold">Profile</h1>
       <div className="w-full rounded-md bg-white p-6 shadow-md sm:w-2/3 md:w-1/2 lg:w-1/3">
-        <form>
+        <form onSubmit={onSubmit}>
           <div className="mb-4">
             <label
               htmlFor="age"
