@@ -1,7 +1,7 @@
 // trpc/routers/education.ts
 import { clerkClient } from "@clerk/nextjs/server";
-import { PrismaClient, User } from "@prisma/client";
-import { PrismaClientOptions } from "@prisma/client/runtime";
+import type { User } from "@prisma/client";
+import { cache } from "react";
 import { z } from "zod";
 import {
   createTRPCRouter,
@@ -13,6 +13,7 @@ import {
 const SetUserProfile = z.object({
   dateOfBirth: z.date(),
   educationLevel: z.string(),
+  externalId: z.string(),
   userId: z.string(),
 });
 
@@ -21,9 +22,8 @@ const GetUserProfile = z.object({
 });
 
 export const userRouter = createTRPCRouter({
-  getUserProfile: publicProcedure
-    .input(GetUserProfile)
-    .query(
+  getUserProfile: publicProcedure.input(GetUserProfile).query(
+    cache(
       async ({
         ctx,
         input,
@@ -40,28 +40,43 @@ export const userRouter = createTRPCRouter({
 
         return user;
       }
-    ),
+    )
+  ),
   setUserProfile: publicProcedure
     .input(SetUserProfile)
     .mutation(async ({ ctx, input }) => {
       const { prisma } = ctx;
-      const { dateOfBirth, educationLevel, userId } = input;
-      const user = await clerkClient.users.getUser(userId);
+      const { dateOfBirth, educationLevel, externalId, userId } = input;
+      if (!externalId) {
+        const user = await clerkClient.users.getUser(userId);
+        const createdUser = await prisma.user.create({
+          data: {
+            email: user.emailAddresses?.[0]?.emailAddress ?? "",
+            emailVerified: new Date(user.createdAt),
+            dateOfBirth,
+            educationLevel,
+          },
+          select: {
+            dateOfBirth: true,
+            educationLevel: true,
+            id: true,
+          },
+        });
+        console.log(createdUser);
+        await clerkClient.users.updateUser(userId, {
+          externalId: createdUser.id,
+        });
+        return createdUser;
+      }
 
-      return prisma.user.upsert({
+      return prisma.user.update({
         select: {
           dateOfBirth: true,
           educationLevel: true,
           id: true,
         },
-        where: { id: userId },
-        create: {
-          email: user.emailAddresses?.[0]?.emailAddress ?? "",
-          emailVerified: new Date(user.createdAt),
-          dateOfBirth,
-          educationLevel,
-        },
-        update: {
+        where: { id: externalId },
+        data: {
           dateOfBirth,
           educationLevel,
         },

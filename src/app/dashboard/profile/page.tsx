@@ -15,39 +15,33 @@ export default function ProfilePage() {
     const data = Object.fromEntries(formData);
     console.log(e, data);
     mut.mutate({
-      userId: user.id,
+      externalId: user.externalId ?? "",
+      userId: user.id ?? "",
       educationLevel: (data.educationLevel as string) ?? "",
       dateOfBirth: new Date((data.dateOfBirth as string) ?? ""),
     });
   };
 
   const userProfile = api.user.getUserProfile.useQuery({
-    userId: user?.id ?? "",
+    userId: user.externalId ?? "",
   });
-
-  // const [age, setAge] = useState<number | undefined>();
-  // const [educationLevel, setEducationLevel] = useState<string | undefined>();
-
-  // const handleAgeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   setAge(parseInt(e.target.value));
-  // };
-
-  // const handleEducationLevelChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-  //   setEducationLevel(e.target.value);
-  // };
-
-  // function to derive age from dateOfBirth
-  function getAge(dateString: string) {
-    const today = new Date();
-    const birthDate = new Date(dateString);
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const m = today.getMonth() - birthDate.getMonth();
-    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-      age--;
-    }
-
-    return age;
+  if (!userProfile || !userProfile.data) {
+    return <div>Loading</div>;
   }
+
+  const formatBirthdate = (birthdate?: string): string | undefined => {
+    if (!birthdate) {
+      return;
+    }
+    const date = new Date(birthdate);
+    const month =
+      date.getMonth() + 1 < 10
+        ? `0${date.getMonth() + 1}`
+        : date.getMonth() + 1;
+    const day = date.getDate();
+    const year = date.getFullYear();
+    return `${year}-${month}-${day}`;
+  };
 
   return (
     <form onSubmit={onSubmit}>
@@ -59,13 +53,13 @@ export default function ProfilePage() {
           Date of Birth
         </label>
         <input
-          defaultValue={userProfile.data?.dateOfBirth?.toString() ?? ""}
+          className="focus:ring-primary focus:border-primary mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none"
+          defaultValue={formatBirthdate(
+            userProfile.data.dateOfBirth?.toString() ?? ""
+          )}
           type="date"
           name="dateOfBirth"
           id="dateOfBirth"
-          // value={dateOfBirth}
-          // onChange={handleDateOfBirthChange}
-          className="focus:ring-primary focus:border-primary mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none"
         />
       </div>
       <div className="mb-4">
@@ -76,18 +70,16 @@ export default function ProfilePage() {
           Education Level
         </label>
         <select
+          className="focus:ring-primary focus:border-primary mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none"
           name="educationLevel"
           id="educationLevel"
-          defaultValue={userProfile.data?.educationLevel ?? ""}
-          // value={educationLevel || ''}
-          // onChange={handleEducationLevelChange}
-          className="focus:ring-primary focus:border-primary mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none"
+          defaultValue={userProfile.data.educationLevel ?? ""}
         >
           <option value="">Select your education level</option>
-          <option value="preschool">Preschool</option>
-          <option value="kindergarten">Kindergarten</option>
-          <option value="elementary">Elementary School</option>
-          <option value="middle">Middle School</option>
+          <option value="Preschool">Preschool</option>
+          <option value="Kindergarten">Kindergarten</option>
+          <option value="Elementary">Elementary School</option>
+          <option value="Middle School">Middle School</option>
         </select>
       </div>
       <button
