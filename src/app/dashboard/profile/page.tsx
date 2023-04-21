@@ -10,6 +10,7 @@ export default function ProfilePage() {
   }
   const mut = api.user.setUserProfile.useMutation();
   const onSubmit = (e: FormEvent) => {
+    e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);
     const data = Object.fromEntries(formData);
     console.log(e, data);
@@ -52,20 +53,18 @@ export default function ProfilePage() {
     <form onSubmit={onSubmit}>
       <div className="mb-4">
         <label
-          htmlFor="age"
+          htmlFor="dateOfBirth"
           className="block text-sm font-medium text-gray-700"
         >
-          Age
+          Date of Birth
         </label>
         <input
-          defaultValue={getAge(userProfile.data?.dateOfBirth?.toString() ?? "")}
-          type="number"
-          name="age"
-          id="age"
-          min="3"
-          max="99"
-          // value={age}
-          // onChange={handleAgeChange}
+          defaultValue={userProfile.data?.dateOfBirth?.toString() ?? ""}
+          type="date"
+          name="dateOfBirth"
+          id="dateOfBirth"
+          // value={dateOfBirth}
+          // onChange={handleDateOfBirthChange}
           className="focus:ring-primary focus:border-primary mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none"
         />
       </div>
