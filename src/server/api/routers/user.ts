@@ -1,6 +1,6 @@
 // trpc/routers/education.ts
 import { clerkClient } from "@clerk/nextjs/server";
-import type { User } from "@prisma/client";
+import type { PrismaClient, User } from "@prisma/client";
 import { cache } from "react";
 import { z } from "zod";
 import {
@@ -20,7 +20,17 @@ const SetUserProfile = z.object({
 const GetUserProfile = z.object({
   userId: z.string(),
 });
+export const getUserProfile = async (
+  userId: string,
+  prisma: PrismaClient
+): Promise<Pick<User, "dateOfBirth" | "id" | "educationLevel"> | null> => {
+  const user = await prisma.user.findUnique({
+    select: { dateOfBirth: true, educationLevel: true, id: true },
+    where: { id: userId },
+  });
 
+  return user;
+};
 export const userRouter = createTRPCRouter({
   getUserProfile: publicProcedure.input(GetUserProfile).query(
     cache(
@@ -33,12 +43,7 @@ export const userRouter = createTRPCRouter({
       > | null> => {
         const { prisma } = ctx;
         const { userId } = input;
-        const user = await prisma.user.findUnique({
-          select: { dateOfBirth: true, educationLevel: true, id: true },
-          where: { id: userId },
-        });
-
-        return user;
+        return await getUserProfile(userId, prisma);
       }
     )
   ),
