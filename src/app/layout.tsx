@@ -4,6 +4,7 @@ import { type ReactNode } from "react";
 import { Header } from "~/pages/components/Header";
 import { ClerkProvider } from "@clerk/nextjs/app-beta";
 import "~/styles/globals.css";
+import { TrpcProvider } from "~/context/TrpcProvider";
 
 type LayoutProps = {
   children: ReactNode;
@@ -16,14 +17,16 @@ export const metadata = {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <html lang="en">
-      <ClerkProvider>
-        <body>
-          <div className="min-h-screen bg-white">
-            <Header />
-            <main className="flex-grow">{children}</main>
-          </div>
-        </body>
-      </ClerkProvider>
+      <TrpcProvider>
+        <ClerkProvider>
+          <body>
+            <div className="min-h-screen bg-white">
+              <Header />
+              <main className="flex-grow">{children}</main>
+            </div>
+          </body>
+        </ClerkProvider>
+      </TrpcProvider>
     </html>
   );
 };

@@ -1,7 +1,6 @@
 "use client";
 import Link from "next/link";
 import { api } from "~/utils/api";
-import { ErrorBoundary } from "react-error-boundary";
 
 function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -34,9 +33,7 @@ function Layout({ children }: { children: React.ReactNode }) {
           </li>
         </ul>
       </nav>
-      <ErrorBoundary fallback={<div>something broke</div>}>
-        {children}
-      </ErrorBoundary>
+      {children}
     </div>
   );
 }
