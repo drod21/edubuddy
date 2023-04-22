@@ -1,6 +1,4 @@
-"use client";
 import Link from "next/link";
-import { api } from "~/utils/api";
 
 function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -38,4 +36,4 @@ function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default api.withTRPC(Layout);
+export default Layout;
