@@ -1,5 +1,3 @@
-import axios, { type AxiosResponse } from "axios";
-
 type Choice = { text: string };
 type Res = {
   choices: Choice[];
@@ -25,11 +23,14 @@ export const chatGPTRequest = async (prompt: string): Promise<string> => {
   };
 
   try {
-    const response: AxiosResponse<Res> = await axios.post(apiUrl, body, {
-      headers: headers,
+    const response = await fetch(apiUrl, {
+      method: "POST",
+      headers: new Headers(headers),
+      body: JSON.stringify(body),
     });
+    const res = (await response.json()) as Res;
 
-    return response?.data?.choices?.[0]?.text ?? "";
+    return res?.choices?.[0]?.text ?? "";
   } catch (error) {
     console.error(error);
     return "Error: Unable to generate content.";

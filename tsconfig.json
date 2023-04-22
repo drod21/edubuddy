@@ -19,12 +19,7 @@
     "baseUrl": ".",
     "paths": {
       "~/*": ["./src/*"]
-    },
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ]
+    }
   },
   "include": [
     ".eslintrc.cjs",
@@ -32,10 +27,7 @@
     "**/*.ts",
     "**/*.tsx",
     "**/*.cjs",
-    "**/*.mjs",
-    ".next/types/**/*.ts",
-    "src/pages/test.tsxak",
-    "src/pages/_app.tsxbak"
+    "**/*.mjs"
   ],
   "exclude": ["node_modules"]
 }

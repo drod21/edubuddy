@@ -1,33 +1,18 @@
 "use client";
 import { useUser } from "@clerk/nextjs";
 import type { FormEvent } from "react";
-import { api } from "~/utils/api";
 
 export default function ProfilePage() {
-  const { user } = useUser();
-  if (!user) {
+  const obj = useUser();
+  if (!obj || !obj?.user) {
     return <div>Not authorized</div>;
   }
-  const mut = api.user.setUserProfile.useMutation();
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);
     const data = Object.fromEntries(formData);
     console.log(e, data);
-    mut.mutate({
-      externalId: user.externalId ?? "",
-      userId: user.id ?? "",
-      educationLevel: (data.educationLevel as string) ?? "",
-      dateOfBirth: new Date((data.dateOfBirth as string) ?? ""),
-    });
   };
-
-  const userProfile = api.user.getUserProfile.useQuery({
-    userId: user.externalId ?? "",
-  });
-  if (!userProfile || !userProfile.data) {
-    return <div>Loading</div>;
-  }
 
   const formatBirthdate = (birthdate?: string): string | undefined => {
     if (!birthdate) {
@@ -54,9 +39,7 @@ export default function ProfilePage() {
         </label>
         <input
           className="focus:ring-primary focus:border-primary mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none"
-          defaultValue={formatBirthdate(
-            userProfile.data.dateOfBirth?.toString() ?? ""
-          )}
+          defaultValue={formatBirthdate("")}
           type="date"
           name="dateOfBirth"
           id="dateOfBirth"
@@ -73,7 +56,7 @@ export default function ProfilePage() {
           className="focus:ring-primary focus:border-primary mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none"
           name="educationLevel"
           id="educationLevel"
-          defaultValue={userProfile.data.educationLevel ?? ""}
+          defaultValue={""}
         >
           <option value="">Select your education level</option>
           <option value="Preschool">Preschool</option>
