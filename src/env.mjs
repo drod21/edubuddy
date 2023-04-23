@@ -6,9 +6,8 @@ import { z } from "zod";
  */
 const server = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]),
-  NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),
-  NEXT_PUBLIC_SUPABASE_URL: z.string().min(1),
-  NEXT_PUBLIC_SUPABASE_KEY: z.string().min(1),
+  CLERK_SECRET_KEY: z.string().min(1),
+  CHATGPT_API_KEY: z.string().min(1),
 });
 
 /**
@@ -18,8 +17,9 @@ const server = z.object({
 const client = z.object(
   /** @satisfies {Record<`NEXT_PUBLIC_${string}`, import('zod').ZodType>} */ ({
     // NEXT_PUBLIC_CLIENTVAR: z.string().min(1),
-    CLERK_SECRET_KEY: z.string().min(1),
-    CHATGPT_API_KEY: z.string().min(1),
+    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),
+    NEXT_PUBLIC_SUPABASE_URL: z.string().min(1),
+    NEXT_PUBLIC_SUPABASE_KEY: z.string().min(1),
     // SUPABASE_KEY: z.string(),
   })
 );
