@@ -6,7 +6,8 @@
     "build": "next build",
     "dev": "next dev",
     "lint": "next lint",
-    "start": "next start"
+    "start": "next start",
+    "update-types": "npx supabase gen types typescript --project-id \"$PROJECT_ID\" > src/types/supabase.ts"
   },
   "dependencies": {
     "@clerk/nextjs": "^4.16.4",
@@ -30,6 +31,7 @@
     "postcss": "^8.4.21",
     "prettier": "^2.8.6",
     "prettier-plugin-tailwindcss": "^0.2.6",
+    "supabase": "^1.50.12",
     "tailwindcss": "^3.3.0",
     "typescript": "^5.0.2"
   },
