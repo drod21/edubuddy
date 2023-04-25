@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       SUPABASE_ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-      PROJECT_ID: EduBuddy
+      PROJECT_ID: ${{ secrets.PROJECT_ID }}
     steps:
       - uses: actions/checkout@v2
         with:
