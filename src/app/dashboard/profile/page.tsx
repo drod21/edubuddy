@@ -19,10 +19,10 @@ export default async function ProfilePage() {
     await supabase.from("user").insert({
       id: user.id,
       email:
-        user.emailAddresses?.find((e) => e.id === user.primaryEmailAddressId)
+        user.emailAddresses.find((e) => e.id === user.primaryEmailAddressId)
           ?.emailAddress ?? "",
-      firstName: user.firstName ?? "",
-      lastName: user.lastName ?? "",
+      firstName: user.firstName,
+      lastName: user.lastName,
     });
   }
 
