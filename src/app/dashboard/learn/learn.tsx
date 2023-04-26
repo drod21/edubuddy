@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 
 import type { Database } from "~/types/supabase";
-type Categories = Array<Database["public"]["Tables"]["categories"]["Row"]>;
+type Category = Database["public"]["Tables"]["categories"]["Row"];
+type Categories = Array<Category>;
 type Subjects = Array<Database["public"]["Tables"]["subjects"]["Row"]>;
 type ContentTypes = Array<string | null>;
 type Props = {
