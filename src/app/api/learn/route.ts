@@ -26,5 +26,5 @@ export async function GET(req: Request) {
     `Please generate a ${activity} content for a ${age}-year-old ${educationLevel} student studying ${subject} in the ${category} category.`
   );
 
-  return NextResponse.json({ res });
+  return NextResponse.json(res);
 }
