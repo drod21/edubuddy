@@ -9,7 +9,6 @@ export const revalidate = 0;
 export default async function LearnPage() {
   // TODO: Fetch categories, subjects, contentTypes
   const activities = await supabase.from("activities").select("contentType");
-  console.log({ activities });
   const categories: { data: Categories | null } = await supabase
     .from("categories")
     .select("*");
