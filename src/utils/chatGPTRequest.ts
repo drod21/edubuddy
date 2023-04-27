@@ -20,7 +20,7 @@ export const chatGPTRequest = async (prompt: string): Promise<Choice[]> => {
     model: "gpt-3.5-turbo",
     n: 1,
     stop: null,
-    temperature: 0.8,
+    temperature: 0.4,
   };
 
   try {
