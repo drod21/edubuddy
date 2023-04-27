@@ -1,4 +1,3 @@
-import Link from "next/link";
 import SideNav from "./SideNav";
 export const revalidate = 0;
 

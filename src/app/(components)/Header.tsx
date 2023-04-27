@@ -18,6 +18,7 @@ const LinkItem = ({ href = "", children }: LinkItemProps) => {
 
 export const Header: React.FC = () => {
   const { userId } = auth();
+  console.log(auth());
 
   return (
     <header className="bg-primary py-4 text-white">

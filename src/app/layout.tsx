@@ -1,5 +1,3 @@
-// app/layout.tsx
-// "use client";
 import { type ReactNode } from "react";
 import { Header } from "~/app/(components)/Header";
 import { ClerkProvider } from "@clerk/nextjs/app-beta";
