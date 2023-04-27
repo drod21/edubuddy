@@ -1,20 +1,67 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, use, cache, useEffect } from "react";
 
 import type { Database } from "~/types/supabase";
+import supabase from "~/utils/supabase";
 type Category = Database["public"]["Tables"]["categories"]["Row"];
 type Categories = Array<Category>;
-type Subjects = Array<Database["public"]["Tables"]["subjects"]["Row"]>;
+type Subjects = Array<
+  Database["public"]["Tables"]["subjects"]["Row"] & {
+    category: { name: string };
+  }
+>;
 type ContentTypes = Array<string | null>;
+type User =
+  | (Database["public"]["Tables"]["user"]["Row"] & {
+      education: { description: string | null };
+    })
+  | null;
 type Props = {
   categories: Categories;
   subjects: Subjects;
   contentTypes: ContentTypes;
+  userProfile: User;
 };
-const Learn = ({ categories, subjects, contentTypes }: Props) => {
+
+const fetchLearnData = async (
+  activity: string,
+  category: string,
+  contentType: string,
+  userProfile: User
+) => {
+  const queryParams = new URLSearchParams({
+    activity,
+    category,
+    contentType,
+    educationLevel: userProfile?.education?.description ?? "",
+    dateOfBirth: userProfile?.dateOfBirth ?? "",
+  });
+  const data = await fetch(`/api/learn?${queryParams.toString()}`).then((r) =>
+    r.json()
+  );
+
+  return data;
+};
+const Learn = ({ categories, subjects, contentTypes, userProfile }: Props) => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedSubject, setSelectedSubject] = useState("");
   const [selectedContentType, setSelectedContentType] = useState("");
+  const [data, setData] = useState("");
+  // const
+  const filteredSubjects = selectedCategory
+    ? subjects.filter((s) => s.category.name === selectedCategory)
+    : [...subjects];
+
+  useEffect(() => {
+    if (selectedCategory && selectedSubject && selectedContentType) {
+      fetchLearnData(
+        selectedCategory,
+        selectedSubject,
+        selectedContentType,
+        userProfile
+      ).then(setData);
+    }
+  }, [selectedCategory, selectedContentType, selectedSubject, userProfile]);
 
   return (
     <>
@@ -48,7 +95,7 @@ const Learn = ({ categories, subjects, contentTypes }: Props) => {
           className="w-full rounded bg-white p-2 text-primary"
         >
           <option value="">Choose a subject</option>
-          {subjects.map((subject, index) => (
+          {filteredSubjects.map((subject, index) => (
             <option key={index} value={subject?.name ?? ""}>
               {subject.name}
             </option>
@@ -74,6 +121,7 @@ const Learn = ({ categories, subjects, contentTypes }: Props) => {
           ))}
         </select>
       </div>
+      {data}
     </>
   );
 };

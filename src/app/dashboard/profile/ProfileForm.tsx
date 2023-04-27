@@ -1,13 +1,41 @@
 "use client";
 import type { FormEvent } from "react";
+import type { Database } from "~/types/supabase";
+import { supabase } from "~/utils/supabase";
+type User = Database["public"]["Tables"]["user"]["Row"] | null;
 
-export default function ProfileForm({ userProfile }: { userProfile: any }) {
+const updateUser = async (data) => {
+  const { error } = await supabase.from("user").update(data).eq("id", data.id);
+  if (error) {
+    console.log(error);
+  }
+};
+export default function ProfileForm({
+  education,
+  userProfile,
+}: {
+  education:
+    | Pick<
+        Database["public"]["Tables"]["education"]["Row"],
+        "id" | "description"
+      >[]
+    | null;
+  userProfile: User;
+}) {
   console.log(userProfile);
-  const onSubmit = (e: FormEvent) => {
+  if (!userProfile) {
+    return null;
+  }
+  const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);
     const data = Object.fromEntries(formData);
     console.log(e, data);
+    await updateUser({
+      id: userProfile.id,
+      educationLevel: data?.educationLevel?.toString() ?? "",
+      dateOfBirth: data?.dateOfBirth?.toString() ?? "",
+    });
   };
 
   const formatBirthdate = (birthdate?: string): string | undefined => {
@@ -25,6 +53,7 @@ export default function ProfileForm({ userProfile }: { userProfile: any }) {
   };
 
   return (
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     <form onSubmit={onSubmit}>
       <div className="mb-4">
         <label
@@ -55,10 +84,11 @@ export default function ProfileForm({ userProfile }: { userProfile: any }) {
           defaultValue={""}
         >
           <option value="">Select your education level</option>
-          <option value="Preschool">Preschool</option>
-          <option value="Kindergarten">Kindergarten</option>
-          <option value="Elementary">Elementary School</option>
-          <option value="Middle School">Middle School</option>
+          {education?.map((e) => (
+            <option key={e.id} value={e.id}>
+              {e.description}
+            </option>
+          ))}
         </select>
       </div>
       <button
