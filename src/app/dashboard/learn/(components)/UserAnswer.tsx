@@ -6,6 +6,7 @@ import LoadingSpinner from "~/app/(components)/LoadingSpinner";
 type Answer = {
   correctAnswer: string;
   grade: number;
+  notes: string;
 };
 type Response = {
   json: () => Promise<Answer>;
