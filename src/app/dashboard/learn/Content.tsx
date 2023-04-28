@@ -1,9 +1,8 @@
-import { type Choice } from "~/utils/chatGPTRequest";
 import UserAnswer from "./(components)/UserAnswer";
 import { StateMachineProvider } from "~/hooks/state-machine/useStateMachine";
 import type { CorrectAnswer } from "./CorrectAnswer";
 type Props = {
-  data: Choice[];
+  data: string[];
 };
 
 const stateMachineConfig = {
@@ -26,7 +25,7 @@ export default function Content(props: Props) {
       <h2 className="mb-4 text-xl font-bold">Activity:</h2>
       <StateMachineProvider<CorrectAnswer> config={stateMachineConfig}>
         {props.data?.map((item, index) => (
-          <UserAnswer key={index} question={item.message.content} />
+          <UserAnswer key={index} question={item} />
         ))}
       </StateMachineProvider>
     </div>

@@ -23,7 +23,7 @@ export async function GET(req: Request): Promise<NextResponse> {
   const age = parseUserAge(dateOfBirth);
 
   const res = await chatGPTRequest(
-    `Please generate a ${activity} content for a ${age}-year-old ${educationLevel} student studying ${subject} in the ${category} category.`
+    `Please generate a ${activity} content for a ${age}-year-old ${educationLevel} student studying ${subject} in the ${category} category. Do not duplicate results.`
   );
 
   return NextResponse.json(res);

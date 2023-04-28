@@ -21,7 +21,7 @@ const CorrectAnswerDisplay = () => {
       <div className="mt-2 text-white">{data.correctAnswer}</div>
       <div className="mt-4 text-xl font-bold text-white">Grade:</div>
       <div className="mt-2 text-white">{data.grade}%</div>
-      {data.notes.length > 0 && (
+      {data.notes?.length > 0 && (
         <>
           <div className="mt-4 text-xl font-bold text-white">Notes:</div>
           <div className="mt-2 text-white">{data.notes}</div>
