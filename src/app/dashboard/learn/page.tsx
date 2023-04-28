@@ -1,10 +1,22 @@
 import { type Database } from "~/types/supabase";
-import Learn from "./learn";
+import Learn from "./Learn";
 import { supabase } from "~/utils/supabase";
 import { auth, clerkClient } from "@clerk/nextjs/app-beta";
+import { type PostgrestSingleResponse } from "@supabase/supabase-js";
+import LoadingSpinner from "~/app/(components)/LoadingSpinner";
+import { Suspense } from "react";
 type Category = Database["public"]["Tables"]["categories"]["Row"];
 type Categories = Array<Category>;
-type Subjects = Array<Database["public"]["Tables"]["subjects"]["Row"]>;
+type Subjects = Array<
+  Database["public"]["Tables"]["subjects"]["Row"] & {
+    category: { name: string };
+  }
+>;
+type User =
+  | (Database["public"]["Tables"]["user"]["Row"] & {
+      education: { description: string | null };
+    })
+  | null;
 
 export const revalidate = 0;
 export default async function LearnPage() {
@@ -22,22 +34,24 @@ export default async function LearnPage() {
   if (!externalId) {
     return;
   }
-  const userProfile = await supabase
+  const userProfile: PostgrestSingleResponse<User> = await supabase
     .from("user")
     .select("dateOfBirth, education: education( description )")
     .eq("id", externalId)
     .single();
-  console.log(userProfile);
+
   return (
-    <Learn
-      userProfile={userProfile?.data ?? null}
-      categories={categories?.data ?? []}
-      subjects={subjects?.data ?? []}
-      contentTypes={
-        activities.data?.map(
-          (x: { contentType: string | null }) => x?.contentType ?? ""
-        ) ?? []
-      }
-    />
+    <Suspense fallback={<LoadingSpinner />}>
+      <Learn
+        userProfile={userProfile?.data ?? null}
+        categories={categories?.data ?? []}
+        subjects={subjects?.data ?? []}
+        contentTypes={
+          activities.data?.map(
+            (x: { contentType: string | null }) => x?.contentType ?? ""
+          ) ?? []
+        }
+      />
+    </Suspense>
   );
 }
