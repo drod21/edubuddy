@@ -1,7 +1,8 @@
 "use client";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import CorrectAnswerDisplay from "../CorrectAnswer";
 import { useStateMachine } from "~/hooks/state-machine/useStateMachine";
+import LoadingSpinner from "~/app/(components)/LoadingSpinner";
 type Answer = {
   correctAnswer: string;
   grade: number;
@@ -57,7 +58,9 @@ export default function UserAnswer(props: { question: string }) {
       >
         Submit
       </button>
-      <CorrectAnswerDisplay />
+      <Suspense fallback={<LoadingSpinner />}>
+        <CorrectAnswerDisplay />
+      </Suspense>
     </div>
   );
 }
