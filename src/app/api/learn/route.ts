@@ -39,7 +39,6 @@ export async function GET(req: Request): Promise<NextResponse> {
 type Req = { answer: string; question: string };
 export async function POST(req: Request): Promise<NextResponse> {
   const body: Req = (await req.json()) as Req;
-  console.log(req);
   if (!body) {
     throw new Error("Error: Unable to generate content.");
   }
@@ -55,8 +54,12 @@ export async function POST(req: Request): Promise<NextResponse> {
 		"grade": "<grade_here>"
 	}
 
-	Do not explain. Just output the correct answer and grade.`;
+	Do not explain. Just output the correctAnswer and grade in valid JSON format. No notes.`;
   const res = await chatGPTRequest(prompt);
   console.log(res);
-  return NextResponse.json(res?.[0]?.message?.content);
+  return NextResponse.json(
+    JSON.parse(
+      res?.[0]?.message?.content ?? '{correctAnswer: "error", grade: 0}'
+    )
+  );
 }

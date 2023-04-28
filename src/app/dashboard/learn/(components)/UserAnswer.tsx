@@ -24,15 +24,13 @@ async function submitAnswer(answer: string, question: string) {
 export default function UserAnswer(props: { question: string }) {
   const { currentState, resource, transitionTo } = useStateMachine();
   const [userAnswer, setUserAnswer] = useState<string>(() => "");
-  const [gradedAnswer, setGradedAnswer] = useState<Answer>(
-    () => ({} as Answer)
-  );
 
   useEffect(() => {
     if (currentState.name === "fetching") {
       resource.setPromise(
         submitAnswer(userAnswer, props.question)
           .then((res) => {
+            console.log(res);
             resource.setData(res);
             transitionTo("success");
           })
@@ -43,13 +41,6 @@ export default function UserAnswer(props: { question: string }) {
       );
     }
   }, [currentState.name, props.question, resource, transitionTo, userAnswer]);
-
-  const handleSubmitAnswer = (e: { preventDefault: () => void }) => {
-    e.preventDefault();
-    if (!userAnswer) {
-      return;
-    }
-  };
 
   return (
     <div>

@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import LoadingSpinner from "~/app/(components)/LoadingSpinner";
 import { useStateMachine } from "~/hooks/state-machine/useStateMachine";
 
 export type CorrectAnswer = {
@@ -9,6 +10,7 @@ export type CorrectAnswer = {
 
 const CorrectAnswerDisplay = () => {
   const { currentState, resource } = useStateMachine();
+  if (currentState.name === "loading") return <LoadingSpinner />;
   if (currentState.name !== "success") return null;
   const data = resource.read() as CorrectAnswer;
 
