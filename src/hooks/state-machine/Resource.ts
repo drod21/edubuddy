@@ -1,6 +1,6 @@
 // Resource.ts
 
-export class Resource<T> {
+export class Resource<T = NonNullable<unknown>> {
   private data: T | null;
   private error: Error | null;
   private promise: Promise<T> | null;

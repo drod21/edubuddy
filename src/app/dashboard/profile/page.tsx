@@ -10,13 +10,16 @@ export default async function ProfilePage() {
   if (!userId) {
     return null;
   }
-  const education = await supabase.from("education").select("id, description");
+  const education = await supabase
+    .from("education")
+    .select("id, description")
+    .order("order", { ascending: true });
   const user = await clerkClient.users.getUser(userId);
   const externalId = user && user.externalId;
   const token = (await auth().getToken({ template: "supabase" })) ?? "";
   await supabase.auth.setSession({ access_token: token, refresh_token: "" });
   let userMetadata;
-  console.log(externalId, user);
+
   if (!externalId && user) {
     userMetadata = await supabase
       .from("user")

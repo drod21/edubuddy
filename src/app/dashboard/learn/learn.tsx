@@ -1,8 +1,17 @@
 "use client";
-import React, { useState, use, cache, useEffect } from "react";
+import React, {
+  useState,
+  useTransition,
+  cache,
+  useEffect,
+  Suspense,
+} from "react";
 
 import type { Database } from "~/types/supabase";
 import { type Choice } from "~/utils/chatGPTRequest";
+import Content from "./Content";
+import LoadingSpinner from "~/app/(components)/LoadingSpinner";
+import Dropdown from "./(components)/Dropdown";
 type Category = Database["public"]["Tables"]["categories"]["Row"];
 type Categories = Array<Category>;
 type Subjects = Array<
@@ -10,7 +19,7 @@ type Subjects = Array<
     category: { name: string };
   }
 >;
-type ContentTypes = Array<string | null>;
+type ContentTypes = Array<string>;
 type User =
   | (Database["public"]["Tables"]["user"]["Row"] & {
       education: { description: string | null };
@@ -23,112 +32,90 @@ type Props = {
   userProfile: User;
 };
 
-const fetchLearnData = async (
-  category: string,
-  subject: string,
-  activity: string,
-  userProfile: User
-) => {
-  const queryParams = new URLSearchParams({
-    activity,
-    category,
-    subject,
-    educationLevel: userProfile?.education?.description ?? "",
-    dateOfBirth: userProfile?.dateOfBirth ?? "",
-  });
-  const data = await fetch(`/api/learn?${queryParams.toString()}`, {
-    method: "GET",
-  }).then((res) => res.json());
+const fetchLearnData = cache(
+  async (
+    category: string,
+    subject: string,
+    activity: string,
+    userProfile: User
+  ): Promise<Choice[]> => {
+    const queryParams = new URLSearchParams({
+      activity,
+      category,
+      subject,
+      educationLevel: userProfile?.education?.description ?? "",
+      dateOfBirth: userProfile?.dateOfBirth ?? "",
+    });
+    const data: { json: () => Promise<Choice[]> } = await fetch(
+      `/api/learn?${queryParams.toString()}`,
+      {
+        method: "GET",
+      }
+    );
 
-  return data;
-};
+    const json: Choice[] = await data.json();
+
+    return json;
+  }
+);
 const Learn = ({ categories, subjects, contentTypes, userProfile }: Props) => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedSubject, setSelectedSubject] = useState("");
   const [selectedContentType, setSelectedContentType] = useState("");
   const [data, setData] = useState<Choice[]>([]);
-  // const
+  const [isPending, startTransition] = useTransition();
   const filteredSubjects = selectedCategory
     ? subjects.filter((s) => s.category.name === selectedCategory)
     : [...subjects];
 
   useEffect(() => {
     if (selectedCategory && selectedSubject && selectedContentType) {
-      fetchLearnData(
-        selectedCategory,
-        selectedSubject,
-        selectedContentType,
-        userProfile
-      ).then(setData);
+      const getLearnData = async () => {
+        const data = await fetchLearnData(
+          selectedCategory,
+          selectedSubject,
+          selectedContentType,
+          userProfile
+        );
+        setData(data);
+      };
+      startTransition(() => void getLearnData());
     }
   }, [selectedCategory, selectedContentType, selectedSubject, userProfile]);
 
   return (
     <>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        <div>
-          <label htmlFor="category" className="mb-1 block">
-            Category:{" "}
-          </label>
-          <select
-            id="category"
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            className="w-full rounded bg-white p-2 text-primary"
-          >
-            <option value="">Choose a category</option>
-            {categories.map((category, index) => (
-              <option key={index} value={category?.name ?? ""}>
-                {category.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <label htmlFor="subject" className="mb-1 block">
-            Subject:{" "}
-          </label>
-          <select
-            id="subject"
-            value={selectedSubject}
-            onChange={(e) => setSelectedSubject(e.target.value)}
-            className="w-full rounded bg-white p-2 text-primary"
-          >
-            <option value="">Choose a subject</option>
-            {filteredSubjects.map((subject, index) => (
-              <option key={index} value={subject?.name ?? ""}>
-                {subject.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <label htmlFor="contentType" className="mb-1 block">
-            Activity:{" "}
-          </label>
-          <select
-            id="contentType"
-            value={selectedContentType}
-            onChange={(e) => setSelectedContentType(e.target.value)}
-            className="w-full rounded bg-white p-2 text-primary"
-          >
-            <option value="">Choose an activity</option>
-            {contentTypes.map((contentType, index) => (
-              <option key={index} value={contentType ?? ""}>
-                {contentType ?? ""}
-              </option>
-            ))}
-          </select>
-        </div>
+        <Dropdown
+          label="Category"
+          value={selectedCategory}
+          onChange={(e) => setSelectedCategory(e.target.value)}
+          options={categories.map((c) => c.name ?? "") ?? []}
+          placeholder="Choose a category"
+          name="category"
+        />
+        <Dropdown
+          label="Subject"
+          value={selectedSubject}
+          onChange={(e) => setSelectedSubject(e.target.value)}
+          options={filteredSubjects.map((s) => s.name ?? "") ?? []}
+          placeholder="Choose a subject"
+          name="subject"
+        />
+        <Dropdown
+          label="Activity"
+          value={selectedContentType}
+          onChange={(e) => setSelectedContentType(e.target.value)}
+          options={contentTypes ?? []}
+          placeholder="Choose an activity"
+          name="contentType"
+        />
       </div>
-      <div className="mt-8 rounded-lg bg-secondary p-8 text-white">
-        <h2 className="mb-4 text-xl font-bold">Content:</h2>
-        <pre className="whitespace-pre-wrap">
-          {data?.map((x) => x.message.content)}
-        </pre>
-      </div>
+      {data.length > 0 ? (
+        <Suspense fallback={<LoadingSpinner />}>
+          {isPending ? <LoadingSpinner /> : <Content data={data} />}
+        </Suspense>
+      ) : null}
     </>
   );
 };

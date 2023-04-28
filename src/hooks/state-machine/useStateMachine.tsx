@@ -36,7 +36,7 @@ function stateMachineReducer<T>(
 const StateMachineContext = createContext<StateMachineContext | null>(null);
 
 // StateMachineProvider component
-export function StateMachineProvider<T extends Record<string, unknown>>({
+export function StateMachineProvider<T = NonNullable<unknown>>({
   config,
   children,
 }: StateMachineProviderProps<T>): JSX.Element {
@@ -46,11 +46,11 @@ export function StateMachineProvider<T extends Record<string, unknown>>({
   );
   const resource = useMemo(() => new Resource<T>(), []);
 
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
 
   useEffect(() => {
-    if (currentState.stateData) {
-      resource.setData(currentState.stateData.data as T | undefined);
+    if (currentState.stateData?.data) {
+      resource.setData(currentState.stateData.data);
     }
   }, [currentState, resource]);
 

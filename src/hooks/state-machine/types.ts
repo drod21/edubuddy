@@ -1,6 +1,7 @@
 // StateMachine.ts
 
 import type { ReactNode } from "react";
+import { Resource } from "./Resource";
 
 // A simple type for state names.
 export type StateName = string;
@@ -32,6 +33,7 @@ export interface StateMachineConfig<T = any> {
 // StateMachineContext type, which holds the current state, transition function, and any optional data.
 export interface StateMachineContext<T = any> {
   currentState: State<T>;
+  resource: Resource<T>;
   transitionTo: (stateName: StateName, data?: T) => void;
 }
 
