@@ -38,7 +38,7 @@ const fetchLearnData = cache(
     subject: string,
     activity: string,
     userProfile: User
-  ): Promise<Choice[]> => {
+  ): Promise<string[]> => {
     const queryParams = new URLSearchParams({
       activity,
       category,
@@ -46,14 +46,14 @@ const fetchLearnData = cache(
       educationLevel: userProfile?.education?.description ?? "",
       dateOfBirth: userProfile?.dateOfBirth ?? "",
     });
-    const data: { json: () => Promise<Choice[]> } = await fetch(
+    const data: { json: () => Promise<string[]> } = await fetch(
       `/api/learn?${queryParams.toString()}`,
       {
         method: "GET",
       }
     );
 
-    const json: Choice[] = await data.json();
+    const json: string[] = await data.json();
 
     return json;
   }
@@ -62,7 +62,7 @@ const Learn = ({ categories, subjects, contentTypes, userProfile }: Props) => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedSubject, setSelectedSubject] = useState("");
   const [selectedContentType, setSelectedContentType] = useState("");
-  const [data, setData] = useState<Choice[]>([]);
+  const [data, setData] = useState<string[]>([]);
   const [isPending, startTransition] = useTransition();
   const filteredSubjects = selectedCategory
     ? subjects.filter((s) => s.category.name === selectedCategory)
