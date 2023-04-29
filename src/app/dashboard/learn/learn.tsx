@@ -7,20 +7,19 @@ import React, {
   Suspense,
 } from "react";
 
-import type { Database } from "~/types/supabase";
+import type { Category, Subject, User as UMetadata } from "~/types/db";
 import Content from "./Content";
 import LoadingSpinner from "~/app/(components)/LoadingSpinner";
 import Dropdown from "./(components)/Dropdown";
-type Category = Database["public"]["Tables"]["categories"]["Row"];
 type Categories = Array<Category>;
 type Subjects = Array<
-  Database["public"]["Tables"]["subjects"]["Row"] & {
+  Subject & {
     category: { name: string };
   }
 >;
 type ContentTypes = Array<string>;
 type User =
-  | (Database["public"]["Tables"]["user"]["Row"] & {
+  | (UMetadata & {
       education: { description: string | null };
     })
   | null;

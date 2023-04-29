@@ -1,6 +1,6 @@
 "use client";
 import type { FormEvent } from "react";
-import type { Database } from "~/types/supabase";
+import type { Database } from "~/types/db";
 import { supabase } from "~/utils/supabase";
 type User = Database["public"]["Tables"]["user"]["Row"] | null;
 

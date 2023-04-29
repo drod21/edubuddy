@@ -1,4 +1,4 @@
-import { type Database } from "~/types/supabase";
+import { type Database } from "~/types/db";
 import Learn from "./learn";
 import { supabase } from "~/utils/supabase";
 import { auth, clerkClient } from "@clerk/nextjs/app-beta";
