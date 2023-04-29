@@ -2,6 +2,8 @@ import { auth, clerkClient } from "@clerk/nextjs/app-beta";
 import { Suspense } from "react";
 import supabase from "~/utils/supabase";
 import ProfileForm from "./ProfileForm";
+import { Database } from "~/types/supabase";
+import { PostgrestSingleResponse } from "@supabase/supabase-js";
 
 export const revalidate = 0;
 
@@ -10,7 +12,12 @@ export default async function ProfilePage() {
   if (!userId) {
     return null;
   }
-  const education = await supabase
+  const education: PostgrestSingleResponse<
+    Pick<
+      Database["public"]["Tables"]["education"]["Row"],
+      "id" | "description"
+    >[]
+  > = await supabase
     .from("education")
     .select("id, description")
     .order("order", { ascending: true });
