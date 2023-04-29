@@ -1,5 +1,5 @@
 import { type Database } from "~/types/supabase";
-import Learn from "./Learn";
+import Learn from "./learn";
 import { supabase } from "~/utils/supabase";
 import { auth, clerkClient } from "@clerk/nextjs/app-beta";
 import { type PostgrestSingleResponse } from "@supabase/supabase-js";
