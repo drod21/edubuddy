@@ -1,7 +1,7 @@
 // StateMachine.ts
 
 import type { ReactNode } from "react";
-import { Resource } from "./Resource";
+import { type Resource } from "./Resource";
 
 // A simple type for state names.
 export type StateName = string;
