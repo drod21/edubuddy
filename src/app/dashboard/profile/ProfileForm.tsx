@@ -4,7 +4,9 @@ import type { Database } from "~/types/supabase";
 import { supabase } from "~/utils/supabase";
 type User = Database["public"]["Tables"]["user"]["Row"] | null;
 
-const updateUser = async (data) => {
+const updateUser = async (
+  data: Partial<Database["public"]["Tables"]["user"]["Row"]>
+) => {
   const { error } = await supabase.from("user").update(data).eq("id", data.id);
   if (error) {
     console.log(error);
