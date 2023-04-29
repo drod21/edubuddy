@@ -2,8 +2,8 @@ import { auth, clerkClient } from "@clerk/nextjs/app-beta";
 import { Suspense } from "react";
 import supabase from "~/utils/supabase";
 import ProfileForm from "./ProfileForm";
-import { Database } from "~/types/supabase";
-import { PostgrestSingleResponse } from "@supabase/supabase-js";
+import type { Database } from "~/types/supabase";
+import type { PostgrestSingleResponse } from "@supabase/supabase-js";
 
 export const revalidate = 0;
 

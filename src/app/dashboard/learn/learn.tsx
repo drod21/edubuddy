@@ -8,7 +8,6 @@ import React, {
 } from "react";
 
 import type { Database } from "~/types/supabase";
-import { type Choice } from "~/utils/chatGPTRequest";
 import Content from "./Content";
 import LoadingSpinner from "~/app/(components)/LoadingSpinner";
 import Dropdown from "./(components)/Dropdown";
