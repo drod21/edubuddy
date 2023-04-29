@@ -2,7 +2,10 @@ export type Choice = { message: { content: string } };
 type Res = {
   choices: Choice[];
 };
-export const chatGPTRequest = async (prompt: string): Promise<string[]> => {
+export const chatGPTRequest = async (
+  prompt: string,
+  n = 3
+): Promise<string[]> => {
   const apiKey = process.env.CHATGPT_API_KEY;
   const apiUrl = "https://api.openai.com/v1/chat/completions";
   if (!apiKey) {
@@ -18,7 +21,7 @@ export const chatGPTRequest = async (prompt: string): Promise<string[]> => {
   const body = {
     messages: [{ role: "user", content: prompt }],
     model: "gpt-3.5-turbo",
-    n: 3,
+    n,
     stop: null,
     temperature: 0.4,
   };

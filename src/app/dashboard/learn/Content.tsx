@@ -23,11 +23,14 @@ export default function Content(props: Props) {
   return (
     <div className="mt-8 rounded-lg bg-secondary p-4 text-white md:p-8">
       <h2 className="mb-4 text-xl font-bold">Activity:</h2>
-      <StateMachineProvider<CorrectAnswer> config={stateMachineConfig}>
-        {props.data?.map((item, index) => (
+      {props.data?.map((item, index) => (
+        <StateMachineProvider<CorrectAnswer>
+          config={stateMachineConfig}
+          key={index}
+        >
           <UserAnswer key={index} question={item} />
-        ))}
-      </StateMachineProvider>
+        </StateMachineProvider>
+      ))}
     </div>
   );
 }

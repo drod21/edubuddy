@@ -56,12 +56,9 @@ export async function POST(req: Request): Promise<NextResponse> {
 	}
 
 	Do not explain. Just output the correctAnswer, notes, and grade in valid JSON format. No notes.`;
-  const res = await chatGPTRequest(prompt);
-  console.log(res);
+  const res = await chatGPTRequest(prompt, 1);
+
   return NextResponse.json(
-    JSON.parse(
-      res?.[0]?.message?.content ??
-        '{correctAnswer: "error", grade: 0, notes: ""}'
-    )
+    JSON.parse(res?.[0] ?? '{correctAnswer: "error", grade: 0, notes: ""}')
   );
 }

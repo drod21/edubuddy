@@ -38,10 +38,10 @@ export interface StateMachineContext<T = any> {
 }
 
 // StateMachineProviderProps type, which holds the state machine config and children elements.
-export interface StateMachineProviderProps<T = any> {
+export interface StateMachineProviderProps<T = unknown> {
   config: StateMachineConfig<T>;
   children: ReactNode;
 }
 
 // useStateMachine type, a custom hook that returns the current state and transition function.
-export type UseStateMachine<T = any> = () => StateMachineContext<T>;
+export type UseStateMachine<T = unknown> = () => StateMachineContext<T>;

@@ -44,15 +44,17 @@ export function StateMachineProvider<T = NonNullable<unknown>>({
     stateMachineReducer,
     config.initialState
   );
-  const resource = useMemo(() => new Resource<T>(), []);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const resource = new Resource<T>();
 
   const [, startTransition] = useTransition();
 
-  useEffect(() => {
-    if (currentState.stateData?.data) {
-      resource.setData(currentState.stateData.data);
-    }
-  }, [currentState, resource]);
+  // useEffect(() => {
+  //   if (currentState.stateData?.data) {
+  //     resource.setData(currentState.stateData.data);
+  //   }
+  // }, [currentState, resource]);
 
   const transitionTo = useCallback(
     (stateName: StateName, data?: T) => {
