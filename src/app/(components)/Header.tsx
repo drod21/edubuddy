@@ -1,48 +1,62 @@
+"use client";
 import Link from "next/link";
-import { auth } from "@clerk/nextjs/app-beta";
+import { type ReactNode, useState } from "react";
 
-type LinkItemProps = {
-  href: string;
-  children: React.ReactNode;
-};
-const LinkItem = ({ href = "", children }: LinkItemProps) => {
-  return (
-    <Link
-      className="text-white transition-colors hover:text-accent"
-      href={href}
-    >
-      {children}
-    </Link>
-  );
-};
-
-export const Header: React.FC = () => {
-  const { userId } = auth();
+export const Header = (props: { children: ReactNode }) => {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <header className="bg-primary py-4 text-white">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between">
-          <div className="text-2xl font-bold">
+        <div
+          className={`flex items-center justify-${
+            mobileMenuOpen ? "center" : "between"
+          }`}
+        >
+          <div
+            className={`${mobileMenuOpen ? "hidden" : ""} text-2xl font-bold `}
+          >
             <Link href="/">EduBuddy</Link>
           </div>
-          <nav className="space-x-6">
-            <LinkItem href="/about">About</LinkItem>
-            <LinkItem href="/features">Features</LinkItem>
-            <LinkItem href="/pricing">Pricing</LinkItem>
-            {!userId && <LinkItem href="/sign-in">Sign In</LinkItem>}
-            {!userId && (
-              <Link
-                className="rounded-md bg-secondary px-6 py-2 transition-colors hover:bg-accent"
-                href="/signup"
+          <div className={mobileMenuOpen ? "hidden" : "block"}>
+            <button
+              onClick={() => setMobileMenuOpen((prev) => !prev)}
+              className="text-neutral focus:outline-none"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
               >
-                Sign Up
-              </Link>
-            )}
-            {userId && <LinkItem href="/dashboard">Dashboard</LinkItem>}
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              </svg>
+            </button>
+          </div>
+          <nav
+            className={`${
+              mobileMenuOpen
+                ? "flex h-screen flex-col justify-center"
+                : "hidden"
+            } space-y-4 md:flex md:space-x-6 md:space-y-0`}
+          >
+            {props.children}
           </nav>
         </div>
       </div>
+
+      {mobileMenuOpen && (
+        <div
+          className="fixed inset-0 z-10 bg-black opacity-25"
+          onClick={() => setMobileMenuOpen(false)}
+        />
+      )}
     </header>
   );
 };

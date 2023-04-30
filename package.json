@@ -11,7 +11,9 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^4.16.4",
+    "@heroicons/react": "^2.0.17",
     "@supabase/supabase-js": "^2.21.0",
+    "classnames": "^2.3.2",
     "next": "^13.2.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
