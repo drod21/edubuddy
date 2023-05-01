@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { CorrectAnswer } from "~/app/dashboard/learn/CorrectAnswer";
 import { Choice, chatGPTRequest } from "~/utils/chatGPTRequest";
 // function to parse user age from dateOfBirth with timezone in utc
 const parseUserAge = (dateOfBirth: string | null) => {
@@ -43,7 +44,7 @@ export async function POST(req: Request): Promise<NextResponse> {
     throw new Error("Error: Unable to generate content.");
   }
 
-  const prompt = `Evaluate the user's answer and return the correct answer, a grade between 0 and 100, and notes about what the user could've done differently to get the right answer in a JSON object.
+  const prompt = `Evaluate the user's answer and return the correct answer, a grade between 0 and 100, and a note about what the user could've done differently to get the right answer in a JSON object.
 	The question is: ${body.question}
 
 	The user's answer is: ${body.answer}.
@@ -52,13 +53,22 @@ export async function POST(req: Request): Promise<NextResponse> {
 	{
 		"correctAnswer": "<correct_answer_here>",
 		"grade": "<grade_here>"
-		"notes": "<notes_here>"
+		"note": "<note_here>"
 	}
 
 	Do not explain. Just output the correctAnswer, notes, and grade in valid JSON format. No notes.`;
-  const res = await chatGPTRequest(prompt, 1);
+  const res: string[] = await chatGPTRequest(prompt, 1);
+  try {
+    if (!res[0]) {
+      throw new Error("Error: Unable to generate content.");
+    }
+    const parsedRes: CorrectAnswer = JSON.parse(
+      res[0]
+    ) as unknown as CorrectAnswer;
 
-  return NextResponse.json(
-    JSON.parse(res?.[0] ?? '{correctAnswer: "error", grade: 0, notes: ""}')
-  );
+    return NextResponse.json(parsedRes);
+  } catch (error) {
+    console.error(error);
+    throw new Error("Error: Unable to generate content.");
+  }
 }
