@@ -1,10 +1,18 @@
-export default function Logo() {
+export default function Logo({
+  height = 100,
+  width = 100,
+  size = 20,
+}: {
+  height: number;
+  width: number;
+  size: number;
+}) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 100 100"
-      width="100"
-      height="100"
+      width={width}
+      height={height}
     >
       <circle
         cx="50"
@@ -19,7 +27,7 @@ export default function Logo() {
         x="50"
         y="82"
         textAnchor="middle"
-        fontSize="20"
+        fontSize={size}
         fontFamily="Arial, sans-serif"
         fill="#007BFF"
       >

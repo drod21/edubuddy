@@ -48,11 +48,7 @@ const Sidebar = ({
             "justify-center py-4": collapsed,
           })}
         >
-          {!collapsed && (
-            <span className="whitespace-nowrap">
-              <Logo />
-            </span>
-          )}
+          {!collapsed && <span className="whitespace-nowrap"></span>}
           <button
             className="grid h-10 w-10 place-content-center rounded-full opacity-100 hover:bg-indigo-800 md:opacity-100"
             onClick={() => setCollapsed(!collapsed)}
@@ -64,6 +60,7 @@ const Sidebar = ({
           <ul
             className={classNames({
               "my-2 flex flex-col items-stretch gap-2": true,
+              hidden: collapsed,
             })}
           >
             {children}
