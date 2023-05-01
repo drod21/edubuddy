@@ -1,12 +1,9 @@
 "use client";
 import type { FormEvent } from "react";
-import type { Database } from "~/types/db";
+import type { Education, User } from "~/types/database.types";
 import { supabase } from "~/utils/supabase";
-type User = Database["public"]["Tables"]["user"]["Row"] | null;
 
-const updateUser = async (
-  data: Partial<Database["public"]["Tables"]["user"]["Row"]>
-) => {
+const updateUser = async (data: Partial<User>) => {
   const { error } = await supabase.from("user").update(data).eq("id", data.id);
   if (error) {
     console.log(error);
@@ -16,15 +13,9 @@ export default function ProfileForm({
   education,
   userProfile,
 }: {
-  education:
-    | Pick<
-        Database["public"]["Tables"]["education"]["Row"],
-        "id" | "description"
-      >[]
-    | null;
+  education: Pick<Education, "id" | "description">[] | null;
   userProfile: User;
 }) {
-  console.log(userProfile);
   if (!userProfile) {
     return null;
   }

@@ -7,7 +7,11 @@ import React, {
   Suspense,
 } from "react";
 
-import type { Category, Subject, User as UMetadata } from "~/types/db";
+import type {
+  Category,
+  Subject,
+  User as UMetadata,
+} from "~/types/database.types";
 import Content from "./Content";
 import LoadingSpinner from "~/app/(components)/LoadingSpinner";
 import Dropdown from "./(components)/Dropdown";

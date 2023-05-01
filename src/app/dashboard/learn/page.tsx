@@ -1,19 +1,22 @@
-import { type Database } from "~/types/db";
+import type {
+  Category,
+  Subject,
+  User as UserMetadata,
+} from "~/types/database.types";
 import Learn from "./learn";
 import { supabase } from "~/utils/supabase";
-import { auth, clerkClient } from "@clerk/nextjs/app-beta";
+import { currentUser } from "@clerk/nextjs/app-beta";
 import { type PostgrestSingleResponse } from "@supabase/supabase-js";
 import LoadingSpinner from "~/app/(components)/LoadingSpinner";
 import { Suspense } from "react";
-type Category = Database["public"]["Tables"]["categories"]["Row"];
 type Categories = Array<Category>;
 type Subjects = Array<
-  Database["public"]["Tables"]["subjects"]["Row"] & {
+  Subject & {
     category: { name: string };
   }
 >;
 type User =
-  | (Database["public"]["Tables"]["user"]["Row"] & {
+  | (UserMetadata & {
       education: { description: string | null };
     })
   | null;
@@ -28,8 +31,7 @@ export default async function LearnPage() {
   const subjects: { data: Subjects | null } = await supabase
     .from("subjects")
     .select(`id, name, category: categories(name)`);
-  const userId = auth().userId;
-  const user = await clerkClient.users.getUser(userId ?? "");
+  const user = await currentUser();
   const externalId = user && user.externalId;
   if (!externalId) {
     return;
