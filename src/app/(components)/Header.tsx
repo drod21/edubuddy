@@ -18,7 +18,7 @@ export const Header = (props: { children: ReactNode }) => {
           >
             <Link href="/">EduBuddy</Link>
           </div>
-          <div className={mobileMenuOpen ? "hidden" : "block"}>
+          <div className={`${mobileMenuOpen ? "hidden" : "block"} md:hidden`}>
             <button
               onClick={() => setMobileMenuOpen((prev) => !prev)}
               className="text-neutral focus:outline-none"

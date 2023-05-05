@@ -20,6 +20,7 @@ const config = {
   // },
   experimental: {
     appDir: true,
+    serverActions: true,
   },
 };
 export default config;
