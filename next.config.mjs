@@ -19,7 +19,6 @@ const config = {
   //   defaultLocale: "en",
   // },
   experimental: {
-    appDir: true,
     serverActions: true,
   },
 };
