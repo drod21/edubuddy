@@ -13,6 +13,21 @@ const parseUserAge = (dateOfBirth: string | null) => {
   return userAge;
 };
 
+export async function fetchData(
+  activity: string,
+  educationLevel: string,
+  subject: string,
+  category: string,
+  dateOfBirth: string
+): Promise<string[]> {
+  const age = parseUserAge(dateOfBirth);
+
+  const res = await chatGPTRequest(
+    `Please generate a ${activity} content for a ${age}-year-old ${educationLevel} student studying ${subject} in the ${category} category. Do not duplicate results.`
+  );
+
+  return res;
+}
 export async function GET(req: Request): Promise<NextResponse> {
   const { url } = req;
   const { searchParams } = new URL(url);

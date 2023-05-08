@@ -45,7 +45,10 @@ export default async function ProfilePage() {
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <ProfileForm education={education.data} userProfile={userMetadata.data} />
+      <ProfileForm
+        education={education.data}
+        userProfile={userMetadata.data ?? null}
+      />
     </Suspense>
   );
 }

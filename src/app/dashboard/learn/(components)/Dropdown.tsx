@@ -5,7 +5,7 @@ type Props = {
   name: string;
   label: string;
   value: string;
-  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => Promise<void> | void;
   options: string[];
 };
 export default function Dropdown(props: Props) {
@@ -19,6 +19,7 @@ export default function Dropdown(props: Props) {
       <select
         name={props.name}
         value={props.value}
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
         onChange={props.onChange}
         className="w-full rounded bg-white p-2 text-primary"
       >

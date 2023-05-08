@@ -14,7 +14,7 @@ export default function ProfileForm({
   userProfile,
 }: {
   education: Pick<Education, "id" | "description">[] | null;
-  userProfile: User;
+  userProfile: User | null;
 }) {
   if (!userProfile) {
     return null;

@@ -1,11 +1,5 @@
 "use client";
-import React, {
-  useState,
-  useTransition,
-  cache,
-  useEffect,
-  Suspense,
-} from "react";
+import React, { useState, Suspense } from "react";
 
 import type {
   Category,
@@ -15,6 +9,8 @@ import type {
 import Content from "./Content";
 import LoadingSpinner from "~/app/(components)/LoadingSpinner";
 import Dropdown from "./(components)/Dropdown";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 type Categories = Array<Category>;
 type Subjects = Array<
   Subject & {
@@ -28,62 +24,32 @@ type User =
     })
   | null;
 type Props = {
+  data: string[];
   categories: Categories;
   subjects: Subjects;
   contentTypes: ContentTypes;
   userProfile: User;
 };
 
-const fetchLearnData = cache(
-  async (
-    category: string,
-    subject: string,
-    activity: string,
-    userProfile: User
-  ): Promise<string[]> => {
-    const queryParams = new URLSearchParams({
-      activity,
-      category,
-      subject,
-      educationLevel: userProfile?.education?.description ?? "",
-      dateOfBirth: userProfile?.dateOfBirth ?? "",
-    });
-    const data: { json: () => Promise<string[]> } = await fetch(
-      `/api/learn?${queryParams.toString()}`,
-      {
-        method: "GET",
-      }
-    );
-
-    const json: string[] = await data.json();
-
-    return json;
-  }
-);
-const Learn = ({ categories, subjects, contentTypes, userProfile }: Props) => {
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [selectedSubject, setSelectedSubject] = useState("");
-  const [selectedContentType, setSelectedContentType] = useState("");
-  const [data, setData] = useState<string[]>([]);
-  const [isPending, startTransition] = useTransition();
+const Learn = ({ categories, data, subjects, contentTypes }: Props) => {
+  // const [data, setData] = useState<string[]>([]);
+  const router = useRouter();
+  const query = useSearchParams();
+  const pathname = usePathname();
+  const [selectedCategory, setSelectedCategory] = useState(
+    (query.get("category") as string) ?? ""
+  );
+  const [selectedSubject, setSelectedSubject] = useState(
+    (query.get("subject") as string) ?? ""
+  );
+  const [selectedContentType, setSelectedContentType] = useState(
+    (query.get("activity") as string) ?? ""
+  );
   const filteredSubjects = selectedCategory
     ? subjects.filter((s) => s.category.name === selectedCategory)
     : [...subjects];
 
-  useEffect(() => {
-    if (selectedCategory && selectedSubject && selectedContentType) {
-      const getLearnData = async () => {
-        const data = await fetchLearnData(
-          selectedCategory,
-          selectedSubject,
-          selectedContentType,
-          userProfile
-        );
-        setData(data);
-      };
-      startTransition(() => void getLearnData());
-    }
-  }, [selectedCategory, selectedContentType, selectedSubject, userProfile]);
+  console.log(query.get("subject"));
 
   return (
     <>
@@ -91,7 +57,14 @@ const Learn = ({ categories, subjects, contentTypes, userProfile }: Props) => {
         <Dropdown
           label="Category"
           value={selectedCategory}
-          onChange={(e) => setSelectedCategory(e.target.value)}
+          onChange={(e) => {
+            setSelectedCategory(e.target.value);
+            const params = new URLSearchParams({
+              category: e.target.value,
+              activity: selectedContentType,
+            }).toString();
+            router.replace(`${pathname}?${params}`);
+          }}
           options={categories.map((c) => c.name ?? "") ?? []}
           placeholder="Choose a category"
           name="category"
@@ -99,7 +72,15 @@ const Learn = ({ categories, subjects, contentTypes, userProfile }: Props) => {
         <Dropdown
           label="Subject"
           value={selectedSubject}
-          onChange={(e) => setSelectedSubject(e.target.value)}
+          onChange={(e) => {
+            const params = new URLSearchParams({
+              category: selectedCategory,
+              subject: e.target.value,
+              activity: selectedContentType,
+            }).toString();
+            setSelectedSubject(e.target.value);
+            router.replace(`${pathname}?${params}`);
+          }}
           options={filteredSubjects.map((s) => s.name ?? "") ?? []}
           placeholder="Choose a subject"
           name="subject"
@@ -107,17 +88,23 @@ const Learn = ({ categories, subjects, contentTypes, userProfile }: Props) => {
         <Dropdown
           label="Activity"
           value={selectedContentType}
-          onChange={(e) => setSelectedContentType(e.target.value)}
+          onChange={(e) => {
+            setSelectedContentType(e.target.value);
+            const params = new URLSearchParams({
+              category: selectedCategory,
+              subject: selectedSubject,
+              activity: e.target.value,
+            }).toString();
+            router.replace(`${pathname}?${params}`);
+          }}
           options={contentTypes ?? []}
           placeholder="Choose an activity"
           name="contentType"
         />
       </div>
-      {data.length > 0 ? (
-        <Suspense fallback={<LoadingSpinner />}>
-          {isPending ? <LoadingSpinner /> : <Content data={data} />}
-        </Suspense>
-      ) : null}
+      <Suspense fallback={<LoadingSpinner />}>
+        <Content data={data} />
+      </Suspense>
     </>
   );
 };
