@@ -1,12 +1,14 @@
 "use client";
 import Link from "next/link";
 import { type ReactNode, useState } from "react";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 export const Header = (props: { children: ReactNode }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [parent] = useAutoAnimate();
 
   return (
-    <header className="bg-primary py-4 text-white">
+    <header ref={parent} className="bg-primary py-4 text-white">
       <div className="container mx-auto px-4">
         <div
           className={`flex items-center justify-${

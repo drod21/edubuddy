@@ -11,6 +11,7 @@ import LoadingSpinner from "~/app/(components)/LoadingSpinner";
 import { Suspense } from "react";
 import { ReadonlyURLSearchParams } from "next/navigation";
 import { fetchData } from "~/app/api/learn/route";
+
 type Categories = Array<Category>;
 type Subjects = Array<
   Subject & {
